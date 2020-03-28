@@ -31,16 +31,21 @@ def home():
 @app.route("/categories/<int:category_id>")
 def product_categories(category_id=None):
     categories = [c for c in show_categories()]
-
+    id_categories = [i for i in show_id_categories()]
+    categories_with_id = list(zip(categories, id_categories))
+    print(categories_with_id)
+    # print(categories)
     if category_id:
         print("1")
         products = []
         for id_ in show_id_categories():
             if id_ == category_id:
-                products = [show_products_by_id(id_)]
-        return render_template("products.html", products=products)
+                products = show_products_by_id(id_)
+                print(products)
+                print(id_)
+        return render_template("products.html", products=products, category_id=category_id)
     print("2")
-    return render_template("categories.html", categories=categories)
+    return render_template("categories.html", categories = categories_with_id)
 
 
 if __name__ == "__main__":

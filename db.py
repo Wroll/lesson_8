@@ -50,5 +50,5 @@ def show_id_categories():
     return id_categories
 
 
-print(show_id_categories())
-print(show_products_by_id(1))
+# print(show_id_categories())
+# print(show_products_by_id(1))
