@@ -33,8 +33,6 @@ def product_categories(category_id=None):
     categories = [c for c in show_categories()]
     id_categories = [i for i in show_id_categories()]
     categories_with_id = list(zip(categories, id_categories))
-    print(categories_with_id)
-    # print(categories)
     if category_id:
         print("1")
         products = []

@@ -20,7 +20,7 @@ def show_categories():
     categories = []
     with DatabaseManager('products.db') as db:
         result = db.execute("""
-            SELECT category.category_name FROM category
+            SELECT categories.name FROM categories
             """)
         for c in result:
             categories.append(*c)
@@ -31,8 +31,8 @@ def show_products_by_id(id_category):
     products_by_category = []
     with DatabaseManager('products.db') as db:
         result = db.execute("""
-            SELECT all_products.product_name FROM all_products
-            WHERE all_products.id_category = ?
+            SELECT my_products.name FROM my_products
+            WHERE my_products.id_category = ? AND my_products.status = 1
             """, [id_category])
         for c in result:
             products_by_category.append(*c)
@@ -43,7 +43,7 @@ def show_id_categories():
     id_categories = []
     with DatabaseManager('products.db') as db:
         result = db.execute("""
-            SELECT category.id_category FROM category
+            SELECT categories.id FROM categories
             """)
         for c in result:
             id_categories.append(*c)
@@ -52,3 +52,4 @@ def show_id_categories():
 
 # print(show_id_categories())
 # print(show_products_by_id(1))
+# print(show_categories())
