@@ -1,0 +1,8 @@
+.idea
+*.log
+*.idea
+.bak
+.dat
+.dir
+__pycache__
+venv
