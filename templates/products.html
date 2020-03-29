@@ -2,19 +2,15 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{{products}}</title>
+    <title>{{products_by_id}}</title>
 </head>
 <body>
-        {% for product in products %}
+        {% for prod in products_by_id %}
         <h1>
-<!--            <a href="categories/{{category_id}}">{{product}}</a>-->
-            {{product}}
-<!--            {{product}}-->
+            <a href="product/{{prod[0]}}">{{prod[1]}}</a>
         </h1>
 
 
         {% endfor %}
-
-
 </body>
 </html>

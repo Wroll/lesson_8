@@ -13,7 +13,6 @@ class DatabaseManager:
 
     def __exit__(self, *args):
         self.cursor.close()
-        pass
 
 
 def show_categories():
@@ -27,7 +26,7 @@ def show_categories():
     return categories
 
 
-def show_products_by_id(id_category):
+def show_products_by_id_category(id_category):
     products_by_category = []
     with DatabaseManager('products.db') as db:
         result = db.execute("""
@@ -50,6 +49,28 @@ def show_id_categories():
     return id_categories
 
 
-# print(show_id_categories())
-# print(show_products_by_id(1))
-# print(show_categories())
+def show_products_by_id(id_product):
+    products = []
+    with DatabaseManager('products.db') as db:
+        result = db.execute("""
+            SELECT my_products.amount, my_products.price,
+            my_products.description
+            FROM my_products
+            WHERE my_products.id = ? AND my_products.status = 1
+            """, [id_product])
+        for i in result:
+            for k in i:
+                products.append(k)
+    return products
+
+
+def show_products_id_by_product_name(product_name):
+    products_id = []
+    with DatabaseManager('products.db') as db:
+        result = db.execute("""
+            SELECT my_products.id FROM my_products
+            WHERE my_products.name = ? AND my_products.status =1 
+            """, [product_name])
+        for c in result:
+            products_id.append(*c)
+    return products_id

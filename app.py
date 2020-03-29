@@ -1,6 +1,4 @@
 from flask import Flask, render_template
-from flask import request, jsonify
-import sqlite3
 from db import *
 
 """
@@ -21,29 +19,26 @@ app = Flask(__name__)
 def home():
     return "Hello, World!"
 
-
-# @app.route("/categories")
-# def product_categories():
-#     categories = [c for c in show_categories()]
-#     return render_template("categories.html", categories=categories)
-
+# 1
 @app.route("/categories")
 @app.route("/categories/<int:category_id>")
-def product_categories(category_id=None):
+@app.route("/categories/product/<int:product_id>")
+def product_categories(category_id=None, product_id=None):
     categories = [c for c in show_categories()]
     id_categories = [i for i in show_id_categories()]
     categories_with_id = list(zip(categories, id_categories))
     if category_id:
-        print("1")
-        products = []
-        for id_ in show_id_categories():
-            if id_ == category_id:
-                products = show_products_by_id(id_)
-                print(products)
-                print(id_)
-        return render_template("products.html", products=products, category_id=category_id)
-    print("2")
-    return render_template("categories.html", categories = categories_with_id)
+        products_by_categories = show_products_by_id_category(category_id)
+        id_products = [show_products_id_by_product_name(p)[0] for p in products_by_categories]
+        products_by_id = list(zip(id_products, products_by_categories))
+        return render_template("products.html", products_by_id=products_by_id)
+    if product_id:
+        description = show_products_by_id(product_id)
+        product_description = {description[0]: "Number of items on sale : ",
+                               description[1]: "Price ($) : ",
+                               description[2]: "Short Description : "}
+        return render_template("product_description.html", product_description=product_description)
+    return render_template("categories.html", categories=categories_with_id)
 
 
 if __name__ == "__main__":
