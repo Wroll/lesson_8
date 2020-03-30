@@ -45,27 +45,24 @@ def admin_page():
 @app.route("/admin", methods=['POST'])
 def handler_product():
     status = 0
-    mandatory_attributes = ['product_name', 'amount', 'price', 'product_category', 'description']
-    print(request.form)
-    if request.form['product_name'] and request.form['amount'] and request.form['price'] and request.form[
-        'product_category'] and request.form['description']:
-        if not check_products(request.form['product_name']):
+    a = request.form.to_dict()
+    mandatory_fields = ['product_name', 'amount', 'price', 'product_category', 'description']
+    valid = [True if a.get(i) else False for i in mandatory_fields]
+    if all(valid):
+        if not check_products(a.get('product_name')):
             return "Product already exist"
-        if check_category(request.form['product_category']):
-            return f"Category {request.form['product_category']} not exist"
-        try:  # kostil
-            if request.form['in_sale'] == 'on':
-                status = 1
-        except:
+        if check_category(a.get('product_category')):
+            categories_to_show = show_categories()
+            categories_to_show = ", ".join(categories_to_show)
+            return f"Category {a.get('product_category')} not exist. Available categories : {categories_to_show}"
+        if a.get('in_sale') == 'on':
             status = 1
-
-        print(request.form['product_name'], request.form['amount'], request.form['price'],
-              request.form['product_category'], request.form['description'], status)
-        # add_new_product(request.form['product_name'], request.form['amount'], request.form['price'],
-        #                 request.form['product_category'], request.form['description'], status)
+        # add to base
+        add_new_product(request.form['product_name'], request.form['amount'], request.form['price'],
+                        request.form['product_category'], request.form['description'], status)
         return "New product is added "
     else:
-        attr = ", ".join(mandatory_attributes)
+        attr = ", ".join(mandatory_fields)
         return f"{attr} must be filled"
 
 
@@ -76,9 +73,8 @@ def handler_category():
         if not check_category(request.form['category_name']):
             return "Category already exist"
             # add to base
-        # add_new_category(request.form['category_name'])
+        add_new_category(request.form['category_name'])
         return "New category added"
-
     return f"Parametr new category name unfilled"
 
 
