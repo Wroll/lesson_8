@@ -55,17 +55,17 @@ def admin_page():
 @app.route("/admin", methods=['POST'])
 def handler_product():
     status = 0
-    a = request.form.to_dict()
+    requests_from_users = request.form.to_dict()
     mandatory_fields = ['product_name', 'amount', 'price', 'product_category', 'description']
-    valid = [True if a.get(i) else False for i in mandatory_fields]
+    valid = [True if requests_from_users.get(i) else False for i in mandatory_fields]
     if all(valid):
-        if not check_products(a.get('product_name')):
+        if not check_products(requests_from_users.get('product_name')):
             return "Product already exist"
-        if check_category(a.get('product_category')):
+        if check_category(requests_from_users.get('product_category')):
             categories_to_show = show_categories()
             categories_to_show = ", ".join(categories_to_show)
-            return f"Category {a.get('product_category')} not exist. Available categories : {categories_to_show}"
-        if a.get('in_sale') == 'on':
+            return f"Category {requests_from_users.get('product_category')} not exist. Available categories : {categories_to_show}"
+        if requests_from_users.get('in_sale') == 'on':
             status = 1
         # add to base
         add_new_product(request.form['product_name'], request.form['amount'], request.form['price'],
@@ -85,7 +85,7 @@ def handler_category():
             # add to base
         add_new_category(request.form['category_name'])
         return "New category added"
-    return f"Parametr new category name unfilled"
+    return f"Field new category unfilled"
 
 
 if __name__ == "__main__":
