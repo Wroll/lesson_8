@@ -16,32 +16,42 @@ app = Flask(__name__)
 
 
 # 1
+def take_categories_and_id_categories():
+    categories = [c for c in show_categories()]
+    id_categories = [i for i in show_id_categories()]
+    categories_with_id = list(zip(categories, id_categories))
+    return categories_with_id
+
+
+def take_products_by_category_and_id_products(id_category):
+    products_by_categories = show_products_by_id_category(id_category)
+    id_products = [show_products_id_by_product_name(p)[0] for p in products_by_categories]
+    products_by_id = list(zip(id_products, products_by_categories))
+    return products_by_id
+
+
 @app.route("/categories")
 @app.route("/categories/<int:category_id>")
 @app.route("/categories/product/<int:product_id>")
 def product_categories(category_id=None, product_id=None):
-    categories = [c for c in show_categories()]
-    id_categories = [i for i in show_id_categories()]
-    categories_with_id = list(zip(categories, id_categories))
     if category_id:
-        products_by_categories = show_products_by_id_category(category_id)
-        id_products = [show_products_id_by_product_name(p)[0] for p in products_by_categories]
-        products_by_id = list(zip(id_products, products_by_categories))
-        return render_template("products.html", products_by_id=products_by_id)
+        return render_template("products.html", products_by_id=take_products_by_category_and_id_products(category_id))
     if product_id:
         description = show_products_by_id(product_id)
         product_description = {description[0]: "Number of items on sale : ",
                                description[1]: "Price ($) : ",
                                description[2]: "Short Description : "}
         return render_template("product_description.html", product_description=product_description)
-    return render_template("categories.html", categories=categories_with_id)
+    return render_template("categories.html", categories=take_categories_and_id_categories())
 
 
+# 2
 @app.route("/")
 def admin_page():
     return render_template("admin_page.html")
 
 
+# 2
 @app.route("/admin", methods=['POST'])
 def handler_product():
     status = 0
