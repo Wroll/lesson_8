@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 from db import *
 
 """
@@ -14,10 +14,6 @@ from db import *
 
 app = Flask(__name__)
 
-
-@app.route("/")
-def home():
-    return "Hello, World!"
 
 # 1
 @app.route("/categories")
@@ -39,6 +35,51 @@ def product_categories(category_id=None, product_id=None):
                                description[2]: "Short Description : "}
         return render_template("product_description.html", product_description=product_description)
     return render_template("categories.html", categories=categories_with_id)
+
+
+@app.route("/")
+def admin_page():
+    return render_template("admin_page.html")
+
+
+@app.route("/admin", methods=['POST'])
+def handler_product():
+    status = 0
+    mandatory_attributes = ['product_name', 'amount', 'price', 'product_category', 'description']
+    print(request.form)
+    if request.form['product_name'] and request.form['amount'] and request.form['price'] and request.form[
+        'product_category'] and request.form['description']:
+        if not check_products(request.form['product_name']):
+            return "Product already exist"
+        if check_category(request.form['product_category']):
+            return f"Category {request.form['product_category']} not exist"
+        try:  # kostil
+            if request.form['in_sale'] == 'on':
+                status = 1
+        except:
+            status = 1
+
+        print(request.form['product_name'], request.form['amount'], request.form['price'],
+              request.form['product_category'], request.form['description'], status)
+        # add_new_product(request.form['product_name'], request.form['amount'], request.form['price'],
+        #                 request.form['product_category'], request.form['description'], status)
+        return "New product is added "
+    else:
+        attr = ", ".join(mandatory_attributes)
+        return f"{attr} must be filled"
+
+
+@app.route("/admin/new_category", methods=['POST'])
+def handler_category():
+    print(request.form['category_name'])
+    if request.form['category_name']:
+        if not check_category(request.form['category_name']):
+            return "Category already exist"
+            # add to base
+        # add_new_category(request.form['category_name'])
+        return "New category added"
+
+    return f"Parametr new category name unfilled"
 
 
 if __name__ == "__main__":
